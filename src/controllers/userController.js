@@ -6,22 +6,22 @@ const generateToken = require('../Util/generateToken')
 const signup = async (req, res) => {
     
     try {
-      const { first_Name, last_Name, email, password, mobile_Number, role, company_Name, company_URL } = req.body
+      const { firstName, lastName, email, password, mobileNumber, role, companyName, companyURL } = req.body
 
       const  hashedPassword = await hashPassword(password)
 
       const userData = {
-        first_Name,
-        last_Name, 
+        firstName,
+        lastName, 
         email,
         password:  hashedPassword,
-        mobile_Number,
+        mobileNumber,
         role
       }
 
       if (role === 'recruiter') {
-        userData.company_Name = company_Name
-        userData.company_URL = company_URL
+        userData.company_Name = companyName
+        userData.company_URL = companyURL
       }
 
 

@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-  first_Name: {
+  firstName: {
     type: String,
     required: true
   },
-  last_Name: {
+  lastName: {
     type: String,
     required: true
   },
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  mobile_Number: {
+  mobileNumber: {
     type: String,
     required: true
   },
@@ -31,13 +31,13 @@ const userSchema = new mongoose.Schema({
     required: true
   },
 
-  company_Logo: {
+  companyLogo: {
     type: String
   },
-  company_Name: {
+  companyName: {
     type: String
   },
-  company_Type: {
+  companyType: {
     type: String
   },
   employees: {
@@ -46,13 +46,13 @@ const userSchema = new mongoose.Schema({
   location: {
     type: String
   },
-  company_Email: {
+  companyEmail: {
     type: String
   },
-  company_URL: {
+  companyURL: {
     type: String
   },
-  about_Company: {
+  aboutCompany: {
     type: String
   }
 },
