@@ -22,7 +22,10 @@ app.use(express.urlencoded({ extended: false }))
 
 connect()
 
-app.use('/', require('./src/routes/userRoutes'))
+app.use('/api/user', require('./src/routes/userRoutes'))
+app.use('/api/job', require('./src/routes/jobRoutes'))
+app.use('/api/question', require('./src/routes/questionRoutes'))
+app.use('/api/recording', require('./src/routes/recordingRoutes'))
 
 
 //Start our server

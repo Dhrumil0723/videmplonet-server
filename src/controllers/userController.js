@@ -1,14 +1,17 @@
 const User = require('../models/userSchema')
 const { hashPassword, comparePassword } = require('../helpers/auth')
-const jwt = require('jsonwebtoken')
 const generateToken = require('../Util/generateToken')
 
-const signup = async (req, res) => {
+
+// @desc User SIGNUP
+// @route POST /api/user/signup
+// @access public
+const signUp = async (req, res) => {
     
     try {
-      const { firstName, lastName, email, password, mobileNumber, role, companyName, companyURL } = req.body
+      const { firstName, lastName, email, password, mobileNumber, gender, role, companyName, companyURL } = req.body;
 
-      const  hashedPassword = await hashPassword(password)
+      const hashedPassword = await hashPassword(password);
 
       const userData = {
         firstName,
@@ -16,27 +19,27 @@ const signup = async (req, res) => {
         email,
         password:  hashedPassword,
         mobileNumber,
+        gender,
         role
       }
 
       if (role === 'recruiter') {
-        userData.company_Name = companyName
-        userData.company_URL = companyURL
+        userData.companyName = companyName
+        userData.companyURL = companyURL
       }
 
+      const isAlreadyExits = await User.findOne({ email });
 
-      const isAlreadyExits = await User.findOne({ email })
       if(isAlreadyExits){
-        return res.status(200).json({ message: 'Email already exists', code: 204 })
+        return res.json({ message: 'Email already exists', code: 400 })
       }
 
-      //map data
       const response = await User.create(userData);
-      const token = await jwt.sign({email: response.email, id: response._id, role: response.role}, process.env.JWT_SECRET)
-      if(token){
-        return res.cookie(token).status(200).json({ message: 'Successfully !! User Signup', code: 200 });
+
+      if(response){
+        return res.json({ message: 'SignUp Successfully !!' , code: 200 });
       }else{
-        return res.status(200).json({ message: 'Something is wrong !!', code: 204 });
+        return res.json({ message: 'Something Went Wrong !', code: 400 });
       }
     } catch (error) {
         console.log(error);
@@ -44,46 +47,66 @@ const signup = async (req, res) => {
      }
   }
 
-
+  // @desc Authenticate a user
+  // @route POST /api/user/login
+  // @access public
   const login = async (req, res) => {
+
     try {
       const { email, password } = req.body;
-      
-      
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        return res.status(200).json({ message: 'Invalid email' ,code:204});
-      }
-  
-      // const accessToken = jwt.sign({ email: user.email, id: user._id}, process.env.ACCESS_TOKEN_SECRET)
-      // res.json({ accessToken })
-
-      const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
-      // const jwt = 
-
-      const passwordMatch = await comparePassword(password, user.password)
-
-      if(passwordMatch){
-        // const accessToken = jwt.sign({email: user.email, id: user._id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30s'})
-        // const refreshToken = jwt.sign({email: user.email, id: user._id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1d'})
-        jwt.sign({email: user.email, id: user._id, role: user.role}, process.env.JWT_SECRET, {}, (err, token) => {
-          if(err) throw err;
-          return res.json({ message: 'Login Successfully',code:200, data:{user, token} })
-        } )
-        // return res.status(200).json({ Token: generateToken(user.id), message: 'Login Successfully', code: 200})
+    
+      const isEmail = await User.findOne({ email })
+      if (!isEmail) {
+        return res.status(200).json({ message: 'Email is not exits !!'});
       }
 
-      if (!passwordMatch) {
-        return res.status(200).json({ message: 'Invalid password',code:204 });
+      const isPasswordMatch = await comparePassword(password, isEmail.password);
+
+      if (!isPasswordMatch) {
+        return res.json({ message: 'Invalid password' , code: 401 });
+      }else{
+        const token = generateToken(isEmail._id);
+        if(token){
+          return res.json({ message: 'Login Successfully', data:{ isEmail, token }, code: 200 });
+        }else{
+          return res.json({ message: 'Something Went Wrong !', code: 400 });
+        }
       }
-  
-      // return res.status(200).json({ message: 'Login Successfully',code:200 });
-  
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+      return res.json({ message: 'Internal Server Error' });
     }
+    
   }
 
-module.exports = { signup, login };
+  // @desc Authenticate a admin user
+  // @route POST /api/user/admin/login
+  // @access public
+  const adminLogin = async (req, res) => {
+
+    try {
+      const { email, password } = req.body;
+    
+      const isEmail = await User.findOne({ email })
+      if (!isEmail) {
+        return res.status(200).json({ message: 'Email is not exits !!'});
+      }
+
+      const isPasswordMatch = password === isEmail.password ? true : false;
+
+      if (!isPasswordMatch) {
+        return res.json({ message: 'Invalid password' , code: 401 });
+      }else{
+        const token = generateToken(isEmail._id);
+        if(token){
+          return res.json({ message: 'Login Successfully', data:{ isEmail, token }, code: 200 });
+        }else{
+          return res.json({ message: 'Something Went Wrong !', code: 400 });
+        }
+      }
+    } catch (error) {
+      return res.json({ message: 'Internal Server Error' });
+    }
+    
+  }
+
+  module.exports = { signUp, login, adminLogin };
