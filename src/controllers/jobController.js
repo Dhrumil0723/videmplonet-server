@@ -105,13 +105,17 @@ const getAllJobs = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1; 
         const limit = parseInt(req.query.limit) || 3; 
+        const search = req.query.search || '';
 
         const skip = (page - 1) * limit;
 
-        const totalJobs = await Job.countDocuments();
+        const totalJobs = await Job.countDocuments({ jobTitle: { $regex: search, $options: "i" } });
         const totalPages = Math.ceil(totalJobs / limit);
 
-        const jobs = await Job.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const jobs = await Job.find({ jobTitle: { $regex: search, $options: "i" } })
+                              .sort({ createdAt: -1 })
+                              .skip(skip)
+                              .limit(limit);
         
         return res.json({
             message: 'Successfully GET !!',
