@@ -73,7 +73,7 @@ const signUp = async (req, res) => {
         }
       }
     } catch (error) {
-      return res.json({ message: 'Internal Server Error' });
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
     
   }
@@ -104,7 +104,7 @@ const signUp = async (req, res) => {
         }
       }
     } catch (error) {
-      return res.json({ message: 'Internal Server Error' });
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
     
   }

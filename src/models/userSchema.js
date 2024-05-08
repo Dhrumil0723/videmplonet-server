@@ -49,12 +49,12 @@ const userSchema = new mongoose.Schema({
     type: String
   },
 
-  companyType: {
+  typeOfCompany: {
     type: String
   },
 
   companyEmployees: {
-    type: Number
+    type: String
   },
 
   companyLocation: {
@@ -96,12 +96,6 @@ const userSchema = new mongoose.Schema({
 
 },
 {timestamps:true})
-
-// userSchema.virtual('tasks', {
-//   ref: 'Task',
-//   localField: '_id',
-//   foreignField: 'owner'
-// })
 
 const User = mongoose.model('User', userSchema)
 

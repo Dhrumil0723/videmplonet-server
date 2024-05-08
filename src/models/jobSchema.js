@@ -64,7 +64,7 @@ const jobSchema = new mongoose.Schema({
 
     jobStatus:{
         type: String,
-        enum:['active', 'Inactive']
+        enum:['Active', 'Inactive']
     },
 
     jobDate:{

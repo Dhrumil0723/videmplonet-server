@@ -2,10 +2,12 @@ const Job = require('../models/jobSchema')
 const { validateParams } = require('../Util/globalFunction')
 const jobValidation = require("../ValidationSchema/jobValidation")
 const Question = require('../models/questionSchema');
+const moment = require('moment')
 
 // @desc Create new job
 // @route POST /api/job
 // @access public
+
 const createJob = async (req, res) => {
     try{
         const validation = await validateParams(jobValidation, req?.body)
@@ -30,8 +32,8 @@ const createJob = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res.json({ message: 'Internal Server Error', error });
-     }
+        return res.status(500).json({ message: 'Internal Server Error', error,  });
+    }
 }
 
 // @desc UPDATE job
@@ -106,17 +108,55 @@ const getAllJobs = async (req, res) => {
         const page = parseInt(req.query.page) || 1; 
         const limit = parseInt(req.query.limit) || 3; 
         const search = req.query.search || '';
+        const city = req.query.city || '';
+        const dateTimeFilter = req.query.filterDateTime || '';
+
+        console.log(dateTimeFilter)
+
+        let query = {
+            $or: [
+                { jobTitle: { $regex: search, $options: "i" } }
+            ],
+
+        }
+
+        if (city) {
+            query={...query, city}
+        }
+
+        let startDate, now;
+
+        switch (dateTimeFilter) {
+            case 'PastMonth':
+                startDate = moment().subtract(1, 'months').startOf('month').toISOString();
+                now = moment().format();
+                break;
+            case 'PastWeek':
+                startDate = moment().subtract(1, 'weeks').startOf('week').toISOString();
+                now = moment().format()
+                break;
+            case 'Past24Hours':
+                startDate = moment().subtract(1, 'days').startOf('day').toISOString();
+                now = moment().format()
+                break;
+            default:
+                break;
+        }
+
+        if (startDate) {
+            query.createdAt = { $gte: startDate, $lte: now };
+        }
 
         const skip = (page - 1) * limit;
 
-        const totalJobs = await Job.countDocuments({ jobTitle: { $regex: search, $options: "i" } });
+        const totalJobs = await Job.countDocuments({ ...query });
         const totalPages = Math.ceil(totalJobs / limit);
-
-        const jobs = await Job.find({ jobTitle: { $regex: search, $options: "i" } })
-                              .sort({ createdAt: -1 })
-                              .skip(skip)
-                              .limit(limit);
         
+        const jobs = await Job.find({ ...query })
+                            .sort({ createdAt: -1 })
+                            .skip(skip)
+                            .limit(limit);
+
         return res.json({
             message: 'Successfully GET !!',
             data: jobs,
@@ -158,7 +198,7 @@ const getSingleJob = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.json({ message: 'Internal Server Error', error: error });
+        return res.status(500).json({ message: 'Internal Server Error', error: error });
     }
 };
 

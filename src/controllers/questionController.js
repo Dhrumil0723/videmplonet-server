@@ -1,4 +1,4 @@
-const Question = require('../models/QuestionSchema')
+const Question = require('../models/questionSchema')
 const { validateParams } = require('../Util/globalFunction')
 const questionValidation = require("../ValidationSchema/questionValidation")
 
@@ -18,7 +18,7 @@ const createQuestion = async (req, res) => {
             return res.json({ message: 'Something went wrong !!!', code : 204 })
         }
     } catch (error) {
-        return res.json({ message: 'Internal Server Error' });
+        return res.status(500).json({ message: 'Internal Server Error' });
      }
 }
 
@@ -41,7 +41,7 @@ const updateQuestion = async(req,res) => {
             return res.json({ message: 'Something went wrong !!!', code : 204 })
         }
     } catch(error) {
-        return res.json({ message: 'Internal Server Error' });
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
@@ -62,7 +62,7 @@ const deleteQuestion = async(req,res) => {
             return res.json({ message: 'Something went wrong !!!', code : 204 })
         }
     }catch(error){
-        return res.json({ message: 'Internal Server Error', error });
+        return res.status(500).json({ message: 'Internal Server Error', error });
     }
 }
 
@@ -79,7 +79,7 @@ const getAllQuestion = async(req,res) => {
             return res.json({ message: 'Something went wrong !!!', code: 204 })
         }
     }catch(error){
-        return res.json({ message:'Internal Server Error' })
+        return res.status(500).json({ message:'Internal Server Error' })
     }
 }
 
@@ -100,7 +100,7 @@ const getSingleQuestion = async(req,res) => {
             return res.json({ message: 'Something went wrong !!!', code: 204 })
         }
     }catch(error){
-        return res.json({ message:'Internal Server Error' })
+        return res.status(500).json({ message:'Internal Server Error' })
     }
     
 }
