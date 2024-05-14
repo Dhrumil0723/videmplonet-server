@@ -1,17 +1,17 @@
 const User = require('../models/userSchema')
 const { validateParams } = require('../Util/globalFunction')
-const recruiterValidation = require('../ValidationSchema/recruiterValidation')
+const CandidateValidation = require('../ValidationSchema/candidateValidation')
 
- // @desc Get Recruiter Data
- // @route GET /api/recruiter?id:
+ // @desc Get Candidate Data
+ // @route GET /api/Candidate?id:
  // @access public
 
-const getSingleRecruiter = async (req, res) => {
+const getSingleCandidate = async (req, res) => {
 
     try{
-        const RecruiterId = req.query.id
+        const CandidateId = req.query.id
     
-        const response = await User.findById(RecruiterId)
+        const response = await User.findById(CandidateId)
 
         if(response){
             return res.json({ message: 'Successfully GET !!', data: response, code: 200 })
@@ -24,11 +24,11 @@ const getSingleRecruiter = async (req, res) => {
     
 }
 
-// @desc Get All Recruiter Data
-// @route GET /api/recruiter
+// @desc Get All Candidate Data
+// @route GET /api/Candidate
 // @access public
 
-const getAllRecruiter = async (req, res) => {
+const getAllCandidate = async (req, res) => {
 
     try {
         const page = parseInt(req.query.page) || 1; 
@@ -38,7 +38,7 @@ const getAllRecruiter = async (req, res) => {
 
 
         let query = {
-            role: 'recruiter',
+            role: 'candidate',
             $or: [
                 { firstName: { $regex: search, $options: "i" } },            
                 { lastName: { $regex: search, $options: "i"} },
@@ -78,22 +78,22 @@ const getAllRecruiter = async (req, res) => {
 
 }
 
-// @desc Update Recruiter Details
-// @route PUT /api/recruiter?id:
+// @desc Update Candidate Details
+// @route PUT /api/Candidate?id:
 // @access public
 
-const updateRecruiter = async (req, res) => {
+const updateCandidate = async (req, res) => {
     
     try{
-        const RecruiterId = req.query.id;
+        const CandidateId = req.query.id;
 
 
-        const validation = await validateParams(recruiterValidation, req?.body)
+        const validation = await validateParams(CandidateValidation, req?.body)
 
-        const response = await User.findByIdAndUpdate(RecruiterId, req?.body ,{ new: true })
+        const response = await User.findByIdAndUpdate(CandidateId, req?.body ,{ new: true })
 
         if(response){
-            return res.json({ message: 'Recruiter Updated !!', code : 200 })
+            return res.json({ message: 'Candidate Updated !!', code : 200 })
         }
         else{
             return res.json({ message: 'Something went wrong !!!', code : 204 })
@@ -105,4 +105,4 @@ const updateRecruiter = async (req, res) => {
 
 }
 
-module.exports = { getSingleRecruiter, updateRecruiter, getAllRecruiter }
+module.exports = { getSingleCandidate, updateCandidate, getAllCandidate }

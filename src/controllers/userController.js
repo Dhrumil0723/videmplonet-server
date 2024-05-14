@@ -20,7 +20,8 @@ const signUp = async (req, res) => {
         password:  hashedPassword,
         mobileNumber,
         gender,
-        role
+        role,
+        userStatus: 'Active'
       }
 
       if (role === 'recruiter') {

@@ -91,7 +91,7 @@ const userSchema = new mongoose.Schema({
 
   userStatus:{
     type: String,
-    enum: ['active', 'Inactive']
+    enum: ['Active', 'Inactive']
   }
 
 },

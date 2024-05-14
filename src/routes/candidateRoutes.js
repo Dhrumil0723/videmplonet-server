@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { getSingleRecruiter, updateRecruiter, getAllRecruiter } = require('../controllers/recruiterController')
+const { getSingleCandidate, updateCandidate, getAllCandidate } = require('../controllers/candidateController')
 const multer = require("multer")
 const fs = require('fs')
 
@@ -21,9 +21,9 @@ const storage = multer.diskStorage({
 
 
 //  Auth Routes
-router.route('/').get(getSingleRecruiter)
-router.route('/all').get(getAllRecruiter)
-router.route('/').put(upload.single("companyLogo"), updateRecruiter)
+router.route('/').get(getSingleCandidate)
+router.route('/all').get(getAllCandidate)
+router.route('/').put(upload.single("companyLogo"), updateCandidate)
 
 
 module.exports = router
